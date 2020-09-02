@@ -10,9 +10,11 @@ export default function Note(props) {
       <h2 className="Note__title">
         <Link to={`/note/${props.id}`}>{props.name}</Link>
       </h2>
-      <button className="Note__delete" type="button">
-        <FontAwesomeIcon icon="trash-alt" /> remove
-      </button>
+        <Link to={'/'}>
+          <button onClick={() =>props.clickNoteDelete(props.id)} className="Note__delete" type="button">
+            <FontAwesomeIcon icon="trash-alt" /> remove
+          </button>
+        </Link>
       <div className="Note__dates">
         <div className="Note__dates-modified">
           Modified{' '}
