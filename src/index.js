@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/global.scss';
 import { BrowserRouter } from 'react-router-dom';
-import AppLang from './AppLang';
+import App from './App';
 
 ReactDOM.render(
   <BrowserRouter>
-    <AppLang />
+    <App />
   </BrowserRouter>,
   document.getElementById('root')
 );
