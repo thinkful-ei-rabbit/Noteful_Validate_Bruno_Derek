@@ -8,9 +8,11 @@ npm install --save-dev webpack webpack-cli webpack-dev-server html-webpack-plugi
 
 ==> REACT <==
 npx create-react-app .
+npm install --save prop-types
 npm add --dev react-test-renderer
 npm add --dev enzyme
 npm install react-router-dom
+npm install serve -D
 
 ==> OTHER NPM <==
 npm i eslint --save-dev && npx eslint && npx install-peerdeps --dev eslint-config-airbnb
@@ -27,8 +29,7 @@ mathjs
 = = = = = = = FA Webpack = = = = = =|
 @fortawesome/fontawesome-free
 = = = = = = = FA React = = = = = = =|
-@fortawesome/fontawesome-svg-core
-@fortawesome/react-fontawesome
+npm i @fortawesome/fontawesome-svg-core @fortawesome/react-fontawesome
 @fortawesome/free-solid-svg-icons
 @fortawesome/free-regular-svg-icons
 @fortawesome/free-brands-svg-icons
@@ -48,6 +49,8 @@ mathjs
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint .",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "serve":"serve -s build",
+    "preserve": "npm run build",
   },
 -->

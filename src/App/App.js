@@ -5,7 +5,6 @@ import NoteListNav from '../NoteListNav/NoteListNav';
 import NotePageNav from '../NotePageNav/NotePageNav';
 import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
-import dummyStore from '../dummy-store';
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers';
 import './App.css';
 import StateContext from '../StateContext';
@@ -20,16 +19,8 @@ class App extends Component {
   };
 
   static contextType = StateContext
-  handleDeleteNote = (noteId) => {
-    fetch(`${BASE_URL}notes/${noteId}`, {method:'DELETE'})
-    .then(() => this.fetcher())
-  }
 
-  componentDidMount(){
-    this.fetcher()
-  }
-
-  fetcher() {
+  componentDidMount() {
     return ['notes', 'folders'].map(point => {
       fetch(BASE_URL + point, {
         method: 'GET',
@@ -51,10 +42,6 @@ class App extends Component {
         .catch(error => this.setState({ error }))
     })
   }
-  // componentDidMount() {
-  //   // fake date loading from API call
-  //   setTimeout(() => this.setState(dummyStore), 600);
-  // }
 
   renderNavRoutes() {
     return (
@@ -94,6 +81,16 @@ class App extends Component {
         />
       </>
     );
+  }
+
+  handleDeleteNote = (noteId) => {
+    fetch(`${BASE_URL}notes/${noteId}`, {method:'DELETE'})
+    .then(() => {
+      const notes = this.state.notes.filter(note => note.id !== noteId);
+      this.setState({
+        notes
+      })
+    })
   }
 
   render() {
