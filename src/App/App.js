@@ -8,8 +8,23 @@ import NotePageMain from '../NotePageMain/NotePageMain';
 import { getNotesForFolder, findNote, findFolder } from '../notes-helpers';
 import './App.css';
 import StateContext from '../StateContext';
+import cuid from 'cuid';
 
 const BASE_URL = 'http://localhost:9090/';
+
+// "folders": [
+//   {
+//     "id": "b0715efe-ffaf-11e8-8eb2-f2801f1b9fd1",
+//     "name": "Important"
+//   },
+// "notes": [
+//   {
+//     "id": "cbc787a0-ffaf-11e8-8eb2-f2801f1b9fd1",
+//     "name": "Dogs",
+//     "modified": "2019-01-03T00:00:00.000Z",
+//     "folderId": "b0715efe-ffaf-11e8-8eb2-f2801f1b9fd1",
+//     "content": "Corporis accusamus
+//   },
 
 class App extends Component {
   state = {
@@ -93,6 +108,25 @@ class App extends Component {
     })
   }
 
+  handleAddFolder = (folderName) => {
+    let newFolder = {
+      id: cuid(),
+      name: folderName
+    }
+
+    fetch(`${BASE_URL}folder/`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(newFolder)
+    }).then(() => {
+      this.setState({
+        folders: [...this.state.folders, newFolder]
+      })
+    });
+  }
+
   render() {
     const contextValue = {
       notes: this.state.notes,
@@ -100,7 +134,8 @@ class App extends Component {
       getNotesForFolder,
       findNote,
       findFolder,
-      clickNoteDelete: this.handleDeleteNote
+      clickNoteDelete: this.handleDeleteNote,
+      clickAddFolder: this.handleAddFolder
     }
 
     return (
