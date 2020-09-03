@@ -1,30 +1,41 @@
-import React from 'react';
-import StateContext from '../StateContext'
+import React, {useState} from 'react';
+import ValidationError from '../ValidationError';
+import PropTypes from 'prop-types';
 
-const FolderForm = () => {
-  let userInput = '';
+const FolderForm = ({ clickAddFolder, history }) => {
+  const [folderName, setFolderName] = useState('');
 
 
-  function handleSubmit() {
-    if(userInput.length !== 0){
-      this.context.clickAddFolder(userInput);
-    }
-    else{
-      console.log('invalid name')
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (folderName.length !== 0) {
+      clickAddFolder(folderName);
+      return history.push('/');
     }
   }
 
-  const updateInput = (e) => {
-    userInput = e.target.value
+  const validateName = () => {
+    if(!folderName){
+      return 'enter a valid name'
+    }
   }
 
-  return(
-    <StateContext.Consumer>
-      <form id="add-folder-form" onSubmit={(e) => handleSubmit(e)}>
-        <label htmlFor="folderName">Folder Name:</label>
-        <input type="text" name="folderName" onChange={(e) => updateInput(e)}/>
-        <button type="submit">Add folder</button>
-      </form>
-    </StateContext.Consumer>
-  )
+  return (
+    <form id="add-folder-form" onSubmit={e => handleSubmit(e)}>
+      <label htmlFor="folderName">Folder Name:</label>
+      <input type="text" name={"folderName"} onChange={(e) => setFolderName(e.target.value) }/>
+      <ValidationError message={validateName()}/>
+      <button type="submit">Add folder</button>
+    </form>
+  );
+};
+
+FolderForm.defaultProps = {
+  clickAddFolder: () => {},
 }
+
+FolderForm.propTypes = {
+  clickAddFolder: PropTypes.func.isRequired,
+}
+
+export default FolderForm;

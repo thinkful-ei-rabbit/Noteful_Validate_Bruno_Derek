@@ -9,6 +9,9 @@ import { getNotesForFolder, findNote, findFolder } from '../notes-helpers';
 import './App.css';
 import StateContext from '../StateContext';
 import cuid from 'cuid';
+import FolderForm from '../AddFolder/FolderForm';
+import NoteForm from '../AddNote/NoteForm';
+import ErrorBoundary from '../ErrorBoundary';
 
 const BASE_URL = 'http://localhost:9090/';
 
@@ -36,7 +39,7 @@ class App extends Component {
   static contextType = StateContext
 
   componentDidMount() {
-    return ['notes', 'folders'].map(point => {
+    return ['notes', 'folders'].map(point => (
       fetch(BASE_URL + point, {
         method: 'GET',
         headers: {
@@ -55,7 +58,7 @@ class App extends Component {
           })
         })
         .catch(error => this.setState({ error }))
-    })
+    ))
   }
 
   renderNavRoutes() {
@@ -73,8 +76,19 @@ class App extends Component {
           path="/note/:noteId"
           component={NotePageNav}
         />
-        <Route path="/add-folder/:folderId" component={NotePageNav} />
-        <Route path="/add-note" component={NotePageNav} />
+        <Route path="/add-folder" render={(routerProps) => (
+          <FolderForm
+            clickAddFolder={this.handleAddFolder}
+            {...routerProps}
+          />
+        )}/>
+        <Route path="/add-note" render={(routerProps) => (
+          <NoteForm
+            clickAddNote={this.handleAddNote}
+            folders={this.state.folders}
+            {...routerProps}
+          />
+        )}/>
       </>
     );
   }
@@ -108,23 +122,47 @@ class App extends Component {
     })
   }
 
+  handleAddNote = (name, content, folderId) => {
+    let newNote = {
+      id: cuid(),
+      name: name,
+      content: content,
+      folderId: folderId,
+      modified: new Date()
+    }
+
+    fetch(`${BASE_URL}notes`, {
+      method:'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(newNote)
+    })
+    .then(() =>{
+      this.setState({
+        notes: [...this.state.notes, newNote]
+      })
+    })
+  }
+
   handleAddFolder = (folderName) => {
     let newFolder = {
       id: cuid(),
       name: folderName
     }
 
-    fetch(`${BASE_URL}folder/`, {
+    fetch(`${BASE_URL}folders/`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json'
       },
       body: JSON.stringify(newFolder)
-    }).then(() => {
+    })
+    .then(() => {
       this.setState({
         folders: [...this.state.folders, newFolder]
       })
-    });
+    })
   }
 
   render() {
@@ -140,15 +178,17 @@ class App extends Component {
 
     return (
         <StateContext.Provider value={contextValue}>
-          <div className="App">
-            <nav className="App__nav">{this.renderNavRoutes()}</nav>
-            <header className="App__header">
-              <h1>
-                <Link to="/">Noteful</Link> <FontAwesomeIcon icon="check-double" />
-              </h1>
-            </header>
-            <main className="App__main">{this.renderMainRoutes()}</main>
-          </div>
+            <ErrorBoundary>
+              <div className="App">
+                <nav className="App__nav">{this.renderNavRoutes()}</nav>
+                <header className="App__header">
+                  <h1>
+                    <Link to="/">Noteful</Link> <FontAwesomeIcon icon="check-double" />
+                  </h1>
+                </header>
+                <main className="App__main">{this.renderMainRoutes()}</main>
+              </div>
+            </ErrorBoundary>
         </StateContext.Provider>
     );
   }
