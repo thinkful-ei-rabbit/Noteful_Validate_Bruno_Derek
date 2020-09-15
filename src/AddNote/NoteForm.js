@@ -29,7 +29,7 @@ const NoteForm = ({ clickAddNote, folders, history }) => {
   return (
     <form id="add-note-form" onSubmit={e => handleSubmit(e)}>
       <label htmlFor="noteName">Note Name: </label>
-      <input type="text" name="noteName" onChange={e => setName(e.target.value)}/>
+      <input type="text" name="noteName" onChange={e => setName(e.target.value)} required/>
       <ValidationError message={validateName()}/>
       <label htmlFor="noteDesc">Description: </label>
       <input type="text" name='noteDesc' onChange={e => setContent(e.target.value)}/>
